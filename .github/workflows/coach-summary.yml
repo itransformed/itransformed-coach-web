@@ -1,0 +1,21 @@
+name: Coach Daily Summary
+
+on:
+  # Once per day at 18:00 UTC (20:00 SA time)
+  schedule:
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+
+jobs:
+  call-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Supabase daily-notifications (mode=summary)
+        env:
+          SUPABASE_FUNCTION_URL: ${{ secrets.SUPABASE_FUNCTION_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          curl -sS -X POST "$SUPABASE_FUNCTION_URL?mode=summary" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}'

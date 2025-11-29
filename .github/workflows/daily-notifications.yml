@@ -1,0 +1,21 @@
+name: Athlete Daily Reminders
+
+on:
+  # Run every 5 minutes (UTC) + allow manual trigger
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  call-daily-notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Supabase daily-notifications (mode=reminders)
+        env:
+          SUPABASE_FUNCTION_URL: ${{ secrets.SUPABASE_FUNCTION_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          curl -sS -X POST "$SUPABASE_FUNCTION_URL?mode=reminders" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}'
